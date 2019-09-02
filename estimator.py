@@ -68,13 +68,15 @@ def cnn_model_fn(features, labels, mode):
     return tf.estimator.EstimatorSpec(mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 # Load training and eval data
-((train_data, train_labels), (eval_data, eval_labels)) = tf.keras.datasets.mnist.load_data()
+# ((train_data, train_labels), (eval_data, eval_labels)) = tf.keras.datasets.mnist.load_data()
 
-train_data = train_data/np.float32(255)
-train_labels = train_labels.astype(np.int32)  # not required
+#train_data = train_data/np.float32(255)
+train_data = np.random.randn(60000, 28, 28)
+#train_labels = train_labels.astype(np.int32)  # not required
+train_labels = np.random.randn(60000, )
 
-eval_data = eval_data/np.float32(255)
-eval_labels = eval_labels.astype(np.int32)  # not required
+eval_data = np.random.randn(10000, 28, 28)
+eval_labels = np.random.randn(10000, )
 
 # Create the Estimator
 mirrored_strategy = tf.distribute.MirroredStrategy()
