@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 
 tf.logging.set_verbosity(tf.logging.INFO)
+tf.reset_default_graph()
 
 def cnn_model_fn(features, labels, mode):
     """Model function for CNN."""
@@ -73,16 +74,16 @@ def cnn_model_fn(features, labels, mode):
 #train_data = train_data/np.float32(255)
 train_data = np.random.randn(60000, 28, 28)
 #train_labels = train_labels.astype(np.int32)  # not required
-train_labels = np.random.randn(60000, )
+train_labels = np.random.choice(5, 60000)
 
 eval_data = np.random.randn(10000, 28, 28)
-eval_labels = np.random.randn(10000, )
+eval_labels = np.random.choice(5, 10000)
 
 # Create the Estimator
 mirrored_strategy = tf.distribute.MirroredStrategy()
 config = tf.estimator.RunConfig(
     train_distribute=mirrored_strategy, eval_distribute=mirrored_strategy)
-mnist_classifier = tf.estimator.Estimator(model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model", config=config)
+mnist_classifier = tf.estimator.Estimator(model_fn=cnn_model_fn, model_dir="./model", config=config)
 
 # Set up logging for predictions
 tensors_to_log = {"probabilities": "softmax_tensor"}
