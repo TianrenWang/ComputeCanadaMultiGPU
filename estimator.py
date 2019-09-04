@@ -40,6 +40,9 @@ def cnn_model_fn(features, labels, mode):
     # Logits Layer
     logits = tf.layers.dense(inputs=dropout, units=10)
 
+    # Test out contrib
+    test = tf.contrib.sparsemax.sparsemax(logits)
+
     predictions = {
         # Generate predictions (for PREDICT and EVAL mode)
         "classes": tf.argmax(input=logits, axis=1),
