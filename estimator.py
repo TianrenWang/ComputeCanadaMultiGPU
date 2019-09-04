@@ -48,7 +48,7 @@ def cnn_model_fn(features, labels, mode):
         "classes": tf.argmax(input=logits, axis=1),
         # Add `softmax_tensor` to the graph. It is used for PREDICT and by the
         # `logging_hook`.
-        "probabilities": tf.nn.softmax(logits, name="softmax_tensor")
+        "probabilities": tf.contrib.sparsemax.sparsemax(logits, name="softmax_tensor")
     }
 
     if mode == tf.estimator.ModeKeys.PREDICT:
