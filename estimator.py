@@ -36,7 +36,7 @@ def cnn_model_fn(features, labels, mode):
     dense = tf.layers.dense(inputs=pool2_flat, units=1024, activation=tf.nn.relu)
     dropout = tf.layers.dropout(
         inputs=dense, rate=0.4, training=mode == tf.estimator.ModeKeys.TRAIN)
-    normal = tf.keras.layers.BatchNormalization(epsilon=1e-6)(dropout)
+    normal = tf.contrib.layers.batch_norm(dropout)
 
     # Logits Layer
     logits = tf.layers.dense(inputs=normal, units=10)
