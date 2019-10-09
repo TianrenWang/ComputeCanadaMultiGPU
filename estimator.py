@@ -32,7 +32,7 @@ def cnn_model_fn(features, labels, mode):
         padding="same",
         activation=tf.nn.relu)
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
-    pool2 = batchnormlayer(pool2)
+    pool2 = batchnormlayer(tf.cast(pool2, tf.float32))
 
     # Dense Layer
     pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
