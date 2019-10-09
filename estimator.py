@@ -7,6 +7,8 @@ tf.logging.set_verbosity(tf.logging.INFO)
 tf.reset_default_graph()
 
 def cnn_model_fn(features, labels, mode):
+    batchnormlayer = tf.keras.layers.BatchNormalization(epsilon=1e-6)
+
     """Model function for CNN."""
     # Input Layer
     input_layer = tf.reshape(features["x"], [-1, 28, 28, 1])
@@ -30,6 +32,7 @@ def cnn_model_fn(features, labels, mode):
         padding="same",
         activation=tf.nn.relu)
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
+    pool2 = batchnormlayer(pool2)
 
     # Dense Layer
     pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
@@ -49,7 +52,8 @@ def cnn_model_fn(features, labels, mode):
         "classes": tf.argmax(input=logits, axis=1),
         # Add `softmax_tensor` to the graph. It is used for PREDICT and by the
         # `logging_hook`.
-        "probabilities": tf.contrib.sparsemax.sparsemax(logits, name="softmax_tensor")
+        # "probabilities": tf.contrib.sparsemax.sparsemax(logits, name="softmax_tensor")
+        "probabilities": tf.nn.softmax(logits, name="softmax_tensor")
     }
 
     if mode == tf.estimator.ModeKeys.PREDICT:
@@ -76,7 +80,7 @@ def cnn_model_fn(features, labels, mode):
 # ((train_data, train_labels), (eval_data, eval_labels)) = tf.keras.datasets.mnist.load_data()
 
 #train_data = train_data/np.float32(255)
-train_data = np.random.randn(60000, 28, 28)
+train_data = np.random.randn(60000, 28, 28).astype(np.float32)
 #train_labels = train_labels.astype(np.int32)  # not required
 train_labels = np.random.choice(5, 60000)
 
