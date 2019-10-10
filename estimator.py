@@ -2,16 +2,34 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import tensorflow as tf
 import numpy as np
+import transformer_model
 
 tf.logging.set_verbosity(tf.logging.INFO)
 tf.reset_default_graph()
 
 def cnn_model_fn(features, labels, mode):
-    batchnormlayer = tf.keras.layers.BatchNormalization(epsilon=1e-6)
 
     """Model function for CNN."""
     # Input Layer
-    input_layer = tf.reshape(features["x"], [-1, 28, 28, 1])
+    input = tf.math.abs(tf.math.round(tf.reshape(features["x"], [-1, 784]) * 50))
+
+    transformer = transformer_model.TED_generator(1000)
+
+    logits = transformer(input, mode == tf.estimator.ModeKeys.TRAIN)
+
+    logits = tf.reshape(tf.keras.layers.Dense(1)(logits), [32, 783])
+
+    constant = tf.cast(tf.constant([1] * 32), tf.float32)
+
+    constant = tf.expand_dims(constant, 1)
+
+    logits = tf.concat([logits, constant], 1)
+
+    print("shape :" + str(logits.shape))
+
+    """Model function for CNN."""
+    # Input Layer
+    input_layer = tf.reshape(logits, [-1, 28, 28, 1])
 
     # Convolutional Layer #1
     conv1 = tf.layers.conv2d(
@@ -32,7 +50,6 @@ def cnn_model_fn(features, labels, mode):
         padding="same",
         activation=tf.nn.relu)
     pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
-    pool2 = batchnormlayer(tf.cast(pool2, tf.float32))
 
     # Dense Layer
     pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
