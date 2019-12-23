@@ -19,12 +19,6 @@ def cnn_model_fn(features, labels, mode):
 
     logits = tf.reshape(tf.keras.layers.Dense(784)(input), [32, 784])
 
-    constant = tf.cast(tf.constant([1] * 32), tf.float32)
-
-    constant = tf.expand_dims(constant, 1)
-
-    logits = tf.concat([logits, constant], 1)
-
     print("shape :" + str(logits.shape))
 
     """Model function for CNN."""
