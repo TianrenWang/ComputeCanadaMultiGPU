@@ -13,11 +13,11 @@ def cnn_model_fn(features, labels, mode):
     # Input Layer
     input = tf.math.abs(tf.math.round(tf.reshape(features["x"], [-1, 784]) * 50))
 
-    transformer = transformer_model.TED_generator(1000)
+    # transformer = transformer_model.TED_generator(1000)
+    #
+    # logits = transformer(input, mode == tf.estimator.ModeKeys.TRAIN)
 
-    logits = transformer(input, mode == tf.estimator.ModeKeys.TRAIN)
-
-    logits = tf.reshape(tf.keras.layers.Dense(1)(logits), [32, 783])
+    logits = tf.reshape(tf.keras.layers.Dense(784)(input), [32, 784])
 
     constant = tf.cast(tf.constant([1] * 32), tf.float32)
 
