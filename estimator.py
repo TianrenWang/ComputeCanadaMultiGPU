@@ -30,7 +30,8 @@ def cnn_model_fn(features, labels, mode):
     """Model function for CNN."""
     # Input Layer
     input_layer = tf.reshape(logits, [-1, 28, 28, 1])
-    input_layer = tf.math.l2_normalize(input_layer, -1)
+    var = tf.Variable(input_layer)
+    input_layer = tf.math.l2_normalize(var, -1)
     input_layer = tf.transpose(input_layer, [0, 2, 1, 3])
 
     # Convolutional Layer #1
